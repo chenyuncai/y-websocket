@@ -211,7 +211,7 @@ export class WebsocketProvider extends Observable {
     const encodedParams = url.encodeQueryParams(params)
     this.maxBackoffTime = maxBackoffTime
     this.bcChannel = serverUrl + '/' + roomname
-    this.url = serverUrl + (useFixedServerUrl ? '/' + roomname : '') + (encodedParams.length === 0 ? '' : '?' + encodedParams)
+    this.url = serverUrl + (useFixedServerUrl ? '' : '/' + roomname) + (encodedParams.length === 0 ? '' : '?' + encodedParams)
     this.roomname = roomname
     this.doc = doc
     this._WS = WebSocketPolyfill
