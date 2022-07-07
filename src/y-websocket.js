@@ -188,6 +188,7 @@ export class WebsocketProvider extends Observable {
    * @param {number} [opts.resyncInterval] Request server state every `resyncInterval` milliseconds
    * @param {number} [opts.maxBackoffTime] Maximum amount of time to wait before trying to reconnect (we try to reconnect using exponential backoff)
    * @param {boolean} [opts.disableBc] Disable cross-tab BroadcastChannel communication
+   * @param {boolean} [opts.useFixedServerUrl] Set fixed serverUrl to connect and fill the roomName in params
    */
   constructor (serverUrl, roomname, doc, {
     connect = true,
@@ -196,17 +197,21 @@ export class WebsocketProvider extends Observable {
     WebSocketPolyfill = WebSocket,
     resyncInterval = -1,
     maxBackoffTime = 2500,
-    disableBc = false
+    disableBc = false,
+    useFixedServerUrl = false
   } = {}) {
     super()
     // ensure that url is always ends with /
     while (serverUrl[serverUrl.length - 1] === '/') {
       serverUrl = serverUrl.slice(0, serverUrl.length - 1)
     }
+    if (useFixedServerUrl) {
+      params.roomname = roomname
+    }
     const encodedParams = url.encodeQueryParams(params)
     this.maxBackoffTime = maxBackoffTime
     this.bcChannel = serverUrl + '/' + roomname
-    this.url = serverUrl + '/' + roomname + (encodedParams.length === 0 ? '' : '?' + encodedParams)
+    this.url = serverUrl + (useFixedServerUrl ? '/' + roomname : '') + (encodedParams.length === 0 ? '' : '?' + encodedParams)
     this.roomname = roomname
     this.doc = doc
     this._WS = WebSocketPolyfill

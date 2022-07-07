@@ -8,6 +8,7 @@ const mutex = require('lib0/dist/mutex.cjs')
 const map = require('lib0/dist/map.cjs')
 
 const debounce = require('lodash.debounce')
+const url = require('url')
 
 const callbackHandler = require('./callback.js').callbackHandler
 const isCallbackSet = require('./callback.js').isCallbackSet
@@ -233,6 +234,8 @@ const pingTimeout = 30000
  * @param {any} opts
  */
 exports.setupWSConnection = (conn, req, { docName = req.url.slice(1).split('?')[0], gc = true } = {}) => {
+  // get the roomName if exist in query params
+  docName = url.parse(req.url, true).query.roomname || docName
   conn.binaryType = 'arraybuffer'
   // get doc, initialize if it does not exist yet
   const doc = getYDoc(docName, gc)
